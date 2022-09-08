@@ -100,12 +100,27 @@ September = September.withColumn("Order_ID", September["Order_ID"].cast(IntegerT
 
 # COMMAND ----------
 
-August1.printSchema()
+August.printSchema()
 
 # COMMAND ----------
 
 shape=(April.count(),len(April.columns))
 print(shape)
+
+# COMMAND ----------
+
+April = April.dropDuplicates()
+August = August.dropDuplicates()
+Decembe = Decembe.dropDuplicates()
+February = February.dropDuplicates()
+January = January.dropDuplicates()
+July = July.dropDuplicates()
+June = June.dropDuplicates()
+March = March.dropDuplicates()
+May = May.dropDuplicates()
+November = November.dropDuplicates()
+October = October.dropDuplicates()
+September = September.dropDuplicates()
 
 # COMMAND ----------
 
@@ -136,13 +151,16 @@ April1.isnull().sum().sort_values(ascending=False)
 
 # COMMAND ----------
 
-April.createOrReplaceTempView("April")
+dd=April.unionAll(August).unionAll(Decembe).unionAll(February).unionAll(January).unionAll(July).unionAll(June).unionAll(March).unionAll(May).unionAll(November).unionAll(October).unionAll(September)
+
+# COMMAND ----------
+
+a = dd.toPandas()
+a.info()
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- select Order_ID, sum(Quantity_Ordered*Price_Each) as total_PAY from April group by Order_ID;
-# MAGIC -- SELECT * FROM APRIL
 # MAGIC WITH ctv as(
 # MAGIC select Product ,
 # MAGIC sum(Quantity_Ordered*Price_Each)  as total_PAY 
@@ -151,5 +169,5 @@ April.createOrReplaceTempView("April")
 
 # COMMAND ----------
 
-# DBTITLE 1,End
-
+# DBTITLE 1,Save Point
+dd.write.format("csv").option("header" ,"True").save("/mnt/satish22/afterdatabricks/data_csv")
